@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String   @id @default(uuid())
+  name              String
+  email             String   @unique
+  password          String
+  registration_date DateTime @default(now())
+  user_updated      DateTime @updatedAt
+  orders        Order[]
+  products      Product[]
+  profileImage  String @default("https://i.shgcdn.com/acf85e2d-e3ed-4175-8cee-bb49bb8aca13/-/format/auto/-/preview/3000x3000/-/quality/lighter/")
+}
+
+model Order{
+  id String @id @default(uuid())
+  buyerId String
+  buyer User @relation(fields: [buyerId],references: [id])
+  productId String @unique
+  product Product @relation(fields: [productId],references: [id])
+
+}
+
+model Product {
+  id                 String     @id @default(uuid())
+  userId             String
+  author             User       @relation(fields: [userId], references: [id])
+  title              String
+  description        String
+  price              Float
+  date_listed        DateTime   @default(now())
+  isAccepted         Boolean    @default(false)
+  category           String
+  order               Order?
+  location         String @default("Hanson Hall")
+}
+
+
+model Emergency{
+  id String @id @default(uuid())
+  departmentName String
+  phoneNumber String
+}
